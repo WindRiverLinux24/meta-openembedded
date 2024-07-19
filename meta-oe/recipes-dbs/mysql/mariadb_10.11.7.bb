@@ -1,11 +1,7 @@
 require mariadb.inc
 
 inherit ptest
-inherit useradd multilib_script multilib_header
-MULTILIB_SCRIPTS = "${PN}-dev:${bindir}/mysql_config \
-                    ${PN}-dev:${bindir}/mariadb-install-db \
-                    ${PN}-dev:${bindir}/mariadbd-safe \
-                    "
+inherit useradd
 
 SRC_URI += "${@bb.utils.contains('PTEST_ENABLED', '1', 'file://run-ptest', '', d)}"
 DEPENDS += "${@bb.utils.contains('PTEST_ENABLED', '1', 'rsync-native', '', d)}"
@@ -65,7 +61,3 @@ RCONFLICTS:${PN}-client += "mysql5-client"
 RPROVIDES:${PN}-server += "mysql5-server"
 RREPLACES:${PN}-server += "mysql5-server"
 RCONFLICTS:${PN}-server += "mysql5-server"
-
-do_install:append () {
-        oe_multilib_header mysql/mariadb_version.h mysql/server/my_config.h mysql/server/private/config.h
-}
