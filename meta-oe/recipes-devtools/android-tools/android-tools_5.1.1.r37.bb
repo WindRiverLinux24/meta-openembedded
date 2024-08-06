@@ -193,3 +193,5 @@ android_tools_enable_devmode() {
 }
 
 ROOTFS_POSTPROCESS_COMMAND_${PN}-adbd += "${@bb.utils.contains("USB_DEBUGGING_ENABLED", "1", "android_tools_enable_devmode;", "", d)}"
+
+SKIP_RECIPE[android-tools] ?= "Use higher version from dynamic-layers/selinux/recipes-devtools"
