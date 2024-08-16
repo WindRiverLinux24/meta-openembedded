@@ -15,6 +15,8 @@ COMPATIBLE_MACHINE:armv4 = "(!.*armv4).*"
 COMPATIBLE_MACHINE:armv5 = "(!.*armv5).*"
 COMPATIBLE_MACHINE:mips64 = "(!.*mips64).*"
 
+COMPATIBLE_MACHINE:marvell-cn10xxx = "(!.*armv9).*"
+
 COMPATIBLE_HOST:riscv64 = "null"
 COMPATIBLE_HOST:riscv32 = "null"
 COMPATIBLE_HOST:powerpc = "null"
