@@ -1,0 +1,47 @@
+From e6cf81f4dbca05afaff4e659ada2a1e439d2b577 Mon Sep 17 00:00:00 2001
+From: Mahdi Sharifi <devraymondsh@gmail.com>
+Date: Wed, 24 Apr 2024 10:00:02 +0330
+Subject: [PATCH] build: fix arm64 cross-compilation bug on non-arm machines
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+PR-URL: https://github.com/nodejs/node/pull/52559
+Reviewed-By: Richard Lau <rlau@redhat.com>
+Reviewed-By: Michaël Zasso <targos@protonmail.com>
+
+Upstream-Status: Backport [https://github.com/nodejs/node/commit/6826bbf26755b144a478e51fd0a7dc83aa0c65b8]
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ node.gyp | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/node.gyp b/node.gyp
+index 76dfe121..76edb0b1 100644
+--- a/node.gyp
++++ b/node.gyp
+@@ -464,8 +464,20 @@
+     },
+ 
+     'conditions': [
++      # Pointer authentication for ARM64.
+       ['target_arch=="arm64"', {
+-        'cflags': ['-mbranch-protection=standard'],  # Pointer authentication.
++          'target_conditions': [
++              ['_toolset=="host"', {
++                  'conditions': [
++                      ['host_arch=="arm64"', {
++                          'cflags': ['-mbranch-protection=standard'],
++                      }],
++                  ],
++              }],
++              ['_toolset=="target"', {
++                  'cflags': ['-mbranch-protection=standard'],
++              }],
++          ],
+       }],
+       ['OS in "aix os400"', {
+         'ldflags': [
+-- 
+2.34.1
+

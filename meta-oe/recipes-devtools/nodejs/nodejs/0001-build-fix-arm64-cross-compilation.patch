@@ -1,0 +1,60 @@
+From f2af88d1077d830d5fdcd5c0e31860df632393c4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C3=ABl=20Zasso?= <targos@protonmail.com>
+Date: Wed, 27 Dec 2023 07:19:24 +0100
+Subject: [PATCH] build: fix arm64 cross-compilation
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Commit 938212f added -msign-return-address=all to _all_ cflags but that
+is wrong when cross-compiling, it should only be added to the target's
+cflags.
+
+The flag being deprecated, it is also changed to
+`-mbranch-protection=standard`.
+
+Fixes: https://github.com/nodejs/node/issues/42888
+Co-Authored-By: Michaël Zasso <targos@protonmail.com>
+PR-URL: https://github.com/nodejs/node/pull/51256
+Fixes: https://github.com/nodejs/build/issues/3319
+Reviewed-By: Richard Lau <rlau@redhat.com>
+Reviewed-By: Luigi Pinca <luigipinca@gmail.com>
+
+Upstream-Status: Backport [https://github.com/nodejs/node/commit/297368a1edc48d2bedc58c75f1857276bdcdd578]
+Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
+---
+ configure.py | 2 --
+ node.gyp     | 3 +++
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/configure.py b/configure.py
+index 00c8513d..ec4f31f6 100755
+--- a/configure.py
++++ b/configure.py
+@@ -1280,9 +1280,7 @@ def configure_node(o):
+ 
+   o['variables']['want_separate_host_toolset'] = int(cross_compiling)
+ 
+-  # Enable branch protection for arm64
+   if target_arch == 'arm64':
+-    o['cflags']+=['-msign-return-address=all']
+     o['variables']['arm_fpu'] = options.arm_fpu or 'neon'
+ 
+   if options.node_snapshot_main is not None:
+diff --git a/node.gyp b/node.gyp
+index 17f08c2a..76dfe121 100644
+--- a/node.gyp
++++ b/node.gyp
+@@ -464,6 +464,9 @@
+     },
+ 
+     'conditions': [
++      ['target_arch=="arm64"', {
++        'cflags': ['-mbranch-protection=standard'],  # Pointer authentication.
++      }],
+       ['OS in "aix os400"', {
+         'ldflags': [
+           '-Wl,-bnoerrmsg',
+-- 
+2.34.1
+
