@@ -11,7 +11,7 @@ that cause symbol from kernel image is mismatch with ram on a live system.
 The fix is provided by Tao Liu <ltao@redhat.com> from crash-utility upstream,
 and not merged to crash master yet.
 
-Upstream-Status: Submitted
+Upstream-Status: Pending
 [https://lists.crash-utility.osci.io/archives/list/devel@lists.crash-utility.osci.io/thread/5OXNYPPU6GLLQKCWH7WBNBJXLNZ4EBZD/]
 
 Signed-off-by: Xiangyu Chen <xiangyu.chen@windriver.com>
